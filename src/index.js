@@ -3,7 +3,7 @@ const express = require('express');
 var bodyParser = require('body-parser');
 const route = require('./route/route.js');
 const mongoose = require('mongoose')
-//const multer = require('multer')
+const multer = require('multer')
 const fileUpload = require("express-fileupload")
 const cors = require('cors')
 
@@ -11,7 +11,7 @@ const cors = require('cors')
 const app = express();
 
 
-// app.use(multer().any())
+//app.use(multer().any())
 
 // app.use(fileUpload());
 // app.use(express.static("uploads"));

@@ -3,9 +3,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const ExpenseSchema= new mongoose.Schema({
 
  category:{
-    type:Strning,
-    
-    
+    type:String,
  },
  amount:{
     type:Number
@@ -16,8 +14,6 @@ const ExpenseSchema= new mongoose.Schema({
  remark:{
     type:String
  }
-    
-    
 }, { timestamps: true }
 )
 

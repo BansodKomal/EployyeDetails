@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const loginController = require('../controller/login')
 const employeeController = require('../controller/employeController')
-// const cloudinary = require('../controller/clodinaryController.js')
-const upload = require('../controller/clodinaryController.js')
 const leaveController = require("../controller/leaveController")
 const attendanceController = require("../controller/attendanceController")
 const expenseController = require("../controller/expenseController")
@@ -26,6 +24,11 @@ router.post("/createLeave/:employeId", leaveController.createLeave)
 router.get("/getLeave/:employeId", leaveController.getLeave)
 router.put("/updateleave", leaveController.updateleave)
 router.delete("/deleteLeaveIdById", leaveController.deleteLeaveById)
-
+ 
+/////////////////////////////////////////////
+router.post("/createExpense", expenseController.createExpense)
+router.get("/getExpenseData", expenseController.getExpenseData)
+router.put("/updateExpenseData", expenseController.updateExpenseData)
+router.delete("/deleteExpense", expenseController.delteExpenseData)
 
 module.exports = router;

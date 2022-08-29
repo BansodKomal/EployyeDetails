@@ -31,7 +31,7 @@ const createLeave = async function (req, res) {
     }
     const { name, fromDate, toDate, remark } = data
     const leaveData = await leaveModel.create(data)
-    return res.status(constant.httpCodes.NEWLYCREATED).send({ status: true, message: constant.messages.LEAVE.SUCCESS, data: create })
+    return res.status(constant.httpCodes.NEWLYCREATED).send({ status: true, message: constant.messages.LEAVE.SUCCESS, data: leaveData })
 
 }
 
@@ -59,7 +59,7 @@ const updateleave = async function (req, res) {
     let leaveId = req.query.leaveId
 
     let body = req.body
-    let status =''
+   
 
     if (!isValidObjectId(leaveId)) {
         return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
@@ -69,10 +69,11 @@ const updateleave = async function (req, res) {
     if (!check) {
         return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
     }
+    
 
 
 
-    let updated = await leaveModel.findOneAndUpdate({ leaveId: leaveId }, body, { new: true })
+    let updated = await leaveModel.findOneAndUpdate({_id: leaveId}, {$set :{body}}, { new: true })
     res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updated });
 
 }

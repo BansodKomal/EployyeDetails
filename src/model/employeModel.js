@@ -13,7 +13,7 @@ const EmployeeSchema = new mongoose.Schema({
     phone: {
         type: Number,
        // required: true,
-        unique: true
+       // unique: true
     },
     joiningDate: {
         type: Date,
@@ -37,6 +37,11 @@ const EmployeeSchema = new mongoose.Schema({
     salary: {
         type: Number,
        // required: true
+    },
+    documentsId:{
+        type:String,
+        default:""
+      
     }
 }, { timestamps: true }
 )
