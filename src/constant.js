@@ -53,5 +53,18 @@ module.exports =
         "VALIDPASSWORD": "please enter valid password,password should contain upperCase letter, lowercase letter,  charecter,and number ",
         "VALIDPHONE": "please enter valid phone number, enter 10 digit number"
       },
+      "EMPLOYE":{
+        "GET":"get employee detatails sucessefully",
+        "UPDATE": "employee details successfully updated",
+        "PARAM":"this id is deleted or inccorect, please enter valid Id ",
+        "ABCENTID":"id not present is db or it delete",
+        "DELETE":"employee details is deleted successfully"
+
+      },
+      "LEAVE":{
+        "SUCCESS": "leave application is submitted successfully",
+        "UPDATE": "leave is updated",
+
+      }
 }
 }

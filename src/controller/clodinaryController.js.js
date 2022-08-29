@@ -23,51 +23,51 @@ module.exports=cloudinary.config({
 //   }
 // })
 
-const create = async (req, res) => {
- // try {
-    //const student = await employeModel.findById(req.params.id);
+// const create = async (req, res) => {
+//  // try {
+//     //const student = await employeModel.findById(req.params.id);
 
-    // if (!student) {
-    //   return res.status(404).json({ message: "Resource not found" });
-    // }
-    const profile = req.files.documents;
-    // Validate Image
-    const fileSize = profile.size / 1000;
-    const fileExt = profile.name.split(".")[1];
-    if (fileSize > 500) {
-      return res
-        .status(400)
-        .json({ message: "file size must be lower than 500kb" });
-    }
+//     // if (!student) {
+//     //   return res.status(404).json({ message: "Resource not found" });
+//     // }
+//     const profile = req.files.documents;
+//     // Validate Image
+//     const fileSize = profile.size / 1000;
+//     const fileExt = profile.name.split(".")[1];
+//     if (fileSize > 500) {
+//       return res
+//         .status(400)
+//         .json({ message: "file size must be lower than 500kb" });
+//     }
 
-    if (!["jpg", "png"].includes(fileExt)) {
-      return res
-        .status(400)
-        .json({ message: "file extension must be jpg or png" });
-    }
+//     if (!["jpg", "png"].includes(fileExt)) {
+//       return res
+//         .status(400)
+//         .json({ message: "file extension must be jpg or png" });
+//     }
 
-    const fileName = `${req.body}${path.extname(profile.name)}`;
-    profile.mv(`uploads/${fileName}`, async (err) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send(err);
-      }
-      // update student profile field
-     await employeModel.create(req.body);
-      res.status(200).json({
-        data: {
-          file: `${req.protocol}://${req.get("host")}/${fileName}`,
-        },
-      });
-    });
-  // } catch (error) {
-  //   console.log(error);
-  // //   res.status(500).json({ message: "Internal Server Error" });
-  // }
-};
+//     const fileName = `${req.body}${path.extname(profile.name)}`;
+//     profile.mv(`uploads/${fileName}`, async (err) => {
+//       if (err) {
+//         console.log(err);
+//         return res.status(500).send(err);
+//       }
+//       // update student profile field
+//      await employeModel.create(req.body);
+//       res.status(200).json({
+//         data: {
+//           file: `${req.protocol}://${req.get("host")}/${fileName}`,
+//         },
+//       });
+//     });
+//   // } catch (error) {
+//   //   console.log(error);
+//   // //   res.status(500).json({ message: "Internal Server Error" });
+//   // }
+// };
   
-// upload.single("documents")
-// const createEmploye = async(req,res)=>{
+
+// module.exports = upload.single("documents"), async(req,res)=>{
 
 // try{
 
@@ -100,4 +100,4 @@ const create = async (req, res) => {
 // }
 
 // }
-module.exports ={create}
+// module.exports ={create}
