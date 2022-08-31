@@ -3,18 +3,20 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const leaveEmployeeSchema = new mongoose.Schema({
 
     name: {
-         type: String 
+         type: String,
+         required:true,
         },
     fromDate: {
-        type: Date,
-        default: Date.now()
+        type: String,
+        required:true,
     },
     toDate: {
-        type: Date,
-        default: Date.now()
+        type: String,
+         required:true,
     },
     remark: {
-        type: String
+        type: String,
+        required:true,
     }
 
 }, { timestamps: true }

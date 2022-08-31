@@ -2,14 +2,10 @@ const constant = require("../constant.js")
 const leaveModel = require('../model/leaveModel')
 const employeModel = require('../model/employeModel')
 const mongoose = require('mongoose')
+var moment = require('moment')
 
 
-const isValid = function (value) {
-    if (typeof value == undefined || value == null || value.length == 0) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true
 
-}
 const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
@@ -18,96 +14,136 @@ const isValidRequestBody = function (requestBody) {
 }
 
 const createLeave = async function (req, res) {
-    let data = req.body
-    employeId = req.params.employeId
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
 
-    if (!isValidObjectId(employeId)) {
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-    }
-    let check = await employeModel.findById(employeId)
-
-    if (!check) {
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-    }
-    const { name, fromDate, toDate, remark } = data
-    const leaveData = await leaveModel.create(data)
-    return res.status(constant.httpCodes.NEWLYCREATED).send({ status: true, message: constant.messages.LEAVE.SUCCESS, data: leaveData })
-
-}
-
-
-const getLeave = async function (req, res) {
-    const employeId = req.params.employeId
-
-    let params = req.query
-    const { id, fromDate, toDate } = params
-    const leaveId = params.id;
-    if (!isValidObjectId(employeId)) {
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-    }
-    const findObj ={};
-    if (id) {
-        findObj._id = id;        
-    }
-    let findLeaveData = await leaveModel.find()
-    return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.GET, data: findLeaveData })
-}
-
-const updateleave = async function (req, res) {
-
-
-    let leaveId = req.query.leaveId
-
-    let body = req.body
-   
-
-    if (!isValidObjectId(leaveId)) {
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-    }
-    let check = await leaveModel.findById(leaveId)
-
-    if (!check) {
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-    }
-    
-
-
-
-    let updated = await leaveModel.findOneAndUpdate({_id: leaveId}, {$set :{body}}, { new: true })
-    res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updated });
-
-}
-
-const deleteLeaveById = async function (req, res) {
     try {
+        let newCreateStatus = constant.httpCodes.NEWLYCREATED
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
+        let createLeaveData = req.body
+        employeId = req.params.employeId
+        const { name, fromDate, toDate, remark } = createLeaveData
+
+        if (!isValidRequestBody(createLeaveData)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.EMPTY, data: null })
+        }
+
+        if (!isValidObjectId(employeId)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+        }
+      //  let levaeDate = moment(date, 'DD/MM/YYYY', true).format()
+        if (!/((\d{4}))/.test(fromDate)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
+        }
+        if (!/((\d{4}))/.test(toDate)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
+        }
+        let checkEmployeId = await employeModel.findById(employeId)
+
+        if (!checkEmployeId) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        }
+
+        const leaveData = await leaveModel.create(createLeaveData)
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.LEAVE.SUCCESS, data: leaveData })
+
+    }
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
+
+}
+
+const getLeaveData = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+
+    try {
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
         let leaveId = req.query.leaveId
-        console.log(leaveId)
-        //let userId = req.params.userId
 
-        if (!isValidObjectId(leaveId)) {
-            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-        }
-        let DelteLeave = await leaveModel.findById(leaveId)
-       // console.log(DelteLeave)
+       
+        const findObj = {};
+        if (leaveId)
+            findObj._id = leaveId;
 
-        if (!DelteLeave) {
-            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        }
-        const findLeaveId = await leaveModel.deleteOne(DelteLeave)
-        if (findLeaveId) {
-            return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: DelteLeave })
-
-        }
-
-
-
-
+        let findLeaveData = await leaveModel.find(findObj)
+        return res.status(success).send({ status: true, message: constant.messages.LEAVE.GET, data: findLeaveData })
     }
 
     catch (err) {
-        res.status(constant.httpCodes.HTTP_SERVER_ERROR).send({ status: false, message: err.message })
+        res.status(server).send({ status: false, message: err.message })
+    }
+
+
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+
+const updateLeave = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+
+    try {
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        let leaveId = req.query.leaveId
+
+        let updateLeaveBody = req.body
+
+        if (!isValidRequestBody(updateLeaveBody)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.EMPTY, data: null })
+        }
+        if (!isValidObjectId(leaveId)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+        }
+        let checkLeaveId = await leaveModel.findById(leaveId)
+
+        if (!checkLeaveId) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        }
+        let updated = await leaveModel.updateOne({ _id: leaveId }, updateLeaveBody, { new: true })
+        res.status(success).send({ status: true, message: constant.messages.LEAVE.UPDATE, data: checkLeaveId });
+
+    }
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
+
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+const deleteLeaveById = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+
+    try {
+
+
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+
+        let leaveId = req.query.leaveId
+
+        if (!isValidObjectId(leaveId)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+        }
+        let delteLeave = await leaveModel.findById(leaveId)
+
+        if (!delteLeave) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        }
+        const findLeaveId = await leaveModel.deleteOne(delteLeave)
+        if (findLeaveId) {
+            return res.status(success).send({ status: true, message: constant.messages.LEAVE.DELETE, data: delteLeave })
+
+        }
+    }
+
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
     }
 
 }
@@ -115,4 +151,4 @@ const deleteLeaveById = async function (req, res) {
 
 
 
-module.exports = { createLeave, getLeave, updateleave, deleteLeaveById }
+module.exports = { createLeave, getLeaveData, updateLeave, deleteLeaveById }

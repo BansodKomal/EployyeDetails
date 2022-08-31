@@ -43,6 +43,6 @@ mongoose.connect(process.env.db, {useNewUrlParser: true})
 app.use('/', route);
 
 
-app.listen(process.env.port, function() {
-	console.log('Express app running on port ' + (process.env.port))
-});
+app.listen(process.env.PORT || 3000, function(){
+    console.log(`the express is run on ` + (process.env.PORT || 3000))
+})

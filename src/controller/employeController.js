@@ -26,169 +26,182 @@ cloudinary.config({
 
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const createEmploye = async function (req, res) {
+  const server = constant.httpCodes.HTTP_SERVER_ERROR
+  try {
+    let newCreateStatus = constant.httpCodes.NEWLYCREATED
+    const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+    let employeeData = req.body
+    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = employeeData
 
-  let data = req.body
-  const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = data
-  if (req?.files?.documents) {
-    let file = req.files.documents
-
-    cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
-    //  console.log(result)
-      console.log(result.public_id)
-     
-      const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary , documentId} = data
-    
-      let data1 = {
-        name: name,
-        address: address,
-        phone: phone,
-        joiningDate: joiningDate,
-        contract: contract,
-        documents: result.url,
-        wfoWfh: wfoWfh,
-        assets: assets,
-        salary: salary,
-        documentsId: result.public_id
-      }
-      let create = await employeModel.create(data1)
-      return res.status(201).send({ status: true, message: "successfully created", data: create })
-    })
-  }
-  else {
-    //return res.status(201).send({ status: true, message: "document is required ", data: null })
-    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = data
-    let data1 = {
-      name: name,
-      address: address,
-      phone: phone,
-      joiningDate: joiningDate,
-      contract: contract,
-      documents: "",
-      wfoWfh: wfoWfh,
-      assets: assets,
-      salary: salary
+    if (!(/^([+]\d{2})?\d{10}$/.test(phone)))
+      return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
+    const alreadyExsit = await employeModel.findOne({ phone: phone })
+    if (alreadyExsit) {
+      return res.status(constant.httpCodes.HTTP_ALREADY_EXISTS).send({ status: false, message: constant.messages.SIGNUP.PHONE_ALREADY_USE, data: null })
     }
-    let create = await employeModel.create(data1)
-    return res.status(201).send({ status: true, message: "Saved withot document", data: create })
+ 
+    if (req?.files?.documents) {
+      let file = req.files.documents
+
+      cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+        let employeeData = req.body
+        let newCreateStatus = constant.httpCodes.NEWLYCREATED
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+
+        const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary, documentId } = employeeData
+
+        if (!(/^([+]\d{2})?\d{10}$/.test(phone)))
+          return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
+        const alreadyExsit = await employeModel.findOne({ phone: phone })
+        if (alreadyExsit) {
+          return res.status(constant.httpCodes.HTTP_ALREADY_EXISTS).send({ status: false, message: constant.messages.SIGNUP.PHONE_ALREADY_USE, data: null })
+        }
+       
+        let createEmployeeData = {
+          name: name,
+          address: address,
+          phone: phone,
+          joiningDate: joiningDate,
+          contract: contract,
+          documents: result.url,
+          wfoWfh: wfoWfh,
+          assets: assets,
+          salary: salary,
+          documentsId: result.public_id
+        }
+        let createEmployeeDetails = await employeModel.create(createEmployeeData)
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.EMPLOYE.SUCCESS, data: createEmployeeDetails })
+      })
+    }
+    else {
+
+      employeeData.documents = "";
+
+      let createEmployeeDetails = await employeModel.create(employeeData)
+      return res.status(newCreateStatus).send({ status: true, message: constant.messages.EMPLOYE.SUCCESS, data: createEmployeeDetails })
+    }
   }
+  catch (err) {
+    res.status(server).send({ status: false, message: err.message })
+  }
+
 }
 
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getEmployeeById = async function (req, res) {
-  let params = req.query
-  const { id, salary } = params
+  const server = constant.httpCodes.HTTP_SERVER_ERROR
+  try {
+    const success = constant.httpCodes.HTTP_SUCCESS
 
-  const all = await employeModel.find()
-  if (id || salary) {
-    let id1 = await employeModel.findById(id)
-    let title1 = await employeModel.find({ salary: salary })
-    let data = (id1 || title1)
-    return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.GET, data: data })
-  }
-  else {
-    return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.GET, data: all })
-  }
+    let query = req.query
+    const { employeId, salary } = query
+    const findObj = {};
+    if (employeId) findObj._id = employeId;
+    if (salary) findObj.salary = salary;
+    const allEmployeData = await employeModel.find(findObj)
 
+    return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.GET, data: allEmployeData })
+
+  }
+  catch (err) {
+    res.status(server).send({ status: false, message: err.message })
+
+  }
 }
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 const updateEmployee = async function (req, res) {
+  const server = constant.httpCodes.HTTP_SERVER_ERROR
 
-  let employeId = req.query.employeId
+  try {
+    const success = constant.httpCodes.HTTP_SUCCESS
+    const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-  let body = req.files
-
-
-
-  if (!isValidObjectId(employeId)) {
-    return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-  }
-  let check = await employeModel.findById(employeId)
-
-  if (!check) {
-    return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-  }
-
-
-  let data = req.body
-  const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = data
-  if (req?.files?.documents) {
-    let file = req.files.documents
-    cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
-      const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = data
-      let data1 = {
-        name: name,
-        address: address,
-        phone: phone,
-        joiningDate: joiningDate,
-        contract: contract,
-        documents: result.url,
-        wfoWfh: wfoWfh,
-        assets: assets,
-        salary: salary
-      }
-      let updated = await employeModel.findOneAndUpdate({ employeId: employeId }, {$set :{data1}}, { new: true })
-      res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updated });
-
-    })
-  }
-  else {
-    console.log(employeId);
-    //return res.status(201).send({ status: true, message: "document is required ", data: null })
-    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = data
-    const data1 = {
-      name: name,
-      address: address,
-      phone: phone,
-      joiningDate: joiningDate,
-      contract: contract,
-      documents: "",
-      wfoWfh: wfoWfh,
-      assets: assets,
-      salary: salary
+    let employeId = req.query.employeId
+    let updateEmployeeBody = req.body
+   
+    if (!isValidRequestBody(updateEmployeeBody)) {
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.EMPTY, data: null })
     }
-    let updated = await employeModel.findOneAndUpdate({ employeId: employeId },{$set :{data1}}, { new: true })
-    res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updated });
+    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = updateEmployeeBody
+    if (!isValidObjectId(employeId)) {
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+    }
+    let checkEmployeId = await employeModel.findById(employeId)
 
+    if (!checkEmployeId) {
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+    }
+    if (req?.files?.documents) {
+      let file = req.files.documents
+      cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+        let employeId = req.query.employeId
+        let employeeDetails = req.body
+        const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = employeeDetails
+        employeeDetails = {
+          name: name,
+          address: address,
+          phone: phone,
+          joiningDate: joiningDate,
+          contract: contract,
+          documents: result.url,
+          wfoWfh: wfoWfh,
+          assets: assets,
+          salary: salary,
+          documentsId: result.public_id
+        }
+        let updatedEmployeeDetails = await employeModel.updateOne({ _id: employeId }, employeeDetails, { new: true })
+        console.log(updatedEmployeeDetails)
+        res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: checkEmployeId });
+      })
+    }
+    else {
+
+      updateEmployeeBody.documents = " ";
+      let updatedEmployeeDetails = await employeModel.updateOne({ _id: employeId }, updateEmployeeBody, { new: true })
+      res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: checkEmployeId });
+    }
   }
+  catch (err) {
+    res.status(server).send({ status: false, message: err.message })
+  }
+
 }
 
-
-
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const deleteEmpleById = async function (req, res) {
+  const server = constant.httpCodes.HTTP_SERVER_ERROR
   try {
+    const success = constant.httpCodes.HTTP_SUCCESS
+    const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-
-    let employeId = req.params.employeId
-    console.log(employeId)
-
-    //let userId = req.params.userId
+    let employeId = req.query.employeId
+    //let documentsId =req.query.documentsId
 
     if (!isValidObjectId(employeId)) {
-      return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
     }
-    let delteEmployeesDetail = await employeModel.findById(employeId)
-    console.log(delteEmployeesDetail.documentsId)
 
+    let delteEmployeesDetail = await employeModel.findById(employeId)
     if (!delteEmployeesDetail) {
-      return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
     }
-        const deleteId = await cloudinary.uploader.destroy(delteEmployeesDetail.documentsId)
-        console.log(deleteId)
-        const findemployeId = await employeModel.deleteOne(delteEmployeesDetail)
-        if (findemployeId) {
-          return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: delteEmployeesDetail})
-    
-        }
-      }
+    const deleteId = await cloudinary.uploader.destroy(delteEmployeesDetail.documentsId)
+    const findEmployeId = await employeModel.deleteOne(delteEmployeesDetail)
+    if (findEmployeId) {
+      return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: delteEmployeesDetail })
+
+    }
+  }
   catch (err) {
-    res.status(constant.httpCodes.HTTP_SERVER_ERROR).send({ status: false, message: err.message })
+    res.status(server).send({ status: false, message: err.message })
   }
 
 }

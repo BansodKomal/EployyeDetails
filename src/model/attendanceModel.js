@@ -1,13 +1,26 @@
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Schema.Types.ObjectId
-const AttendanceSchema= new mongoose.Schema({
+const AttendanceSchema = new mongoose.Schema({
 
-    date:{
-        type:Date,
-        default:Date.now()
+    date: {
+        type: String,
+        required:true,
     },
-    
-    
+    employeeId: {
+        type: ObjectId,
+        required:true,
+        ref: "Employee"
+
+    },
+    inTime: {
+        type: String,
+        required:true,
+    },
+    outTime: {
+        type: String
+    }
+
+
 }, { timestamps: true }
 )
 

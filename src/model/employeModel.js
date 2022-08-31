@@ -4,20 +4,20 @@ const EmployeeSchema = new mongoose.Schema({
 
     name: {
         type: String,
-       // required: true
+        required: true
     },
     address: {
-        type: String,
-       // required: true
+        type: String
+        
     },
     phone: {
-        type: Number,
-       // required: true,
-       // unique: true
+       type: Number,
+       required: true,
+       unique: true
     },
     joiningDate: {
         type: Date,
-       // required: true,
+        required: true,
         dafault: Date.now()
 
     },
@@ -26,7 +26,7 @@ const EmployeeSchema = new mongoose.Schema({
     },
     documents: {
         type: Array,
-        //npm irequired: true
+        required: true
     },
     wfoWfh: {
         type: String
@@ -36,7 +36,7 @@ const EmployeeSchema = new mongoose.Schema({
     },
     salary: {
         type: Number,
-       // required: true
+        required: true
     },
     documentsId:{
         type:String,

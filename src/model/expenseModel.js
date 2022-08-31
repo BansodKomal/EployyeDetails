@@ -4,12 +4,14 @@ const ExpenseSchema= new mongoose.Schema({
 
  category:{
     type:String,
+    required:true,
  },
  amount:{
-    type:Number
+    type:Number,
+    required:true,
  }, 
  date:{
-    type:Date
+    type:String
  },
  remark:{
     type:String

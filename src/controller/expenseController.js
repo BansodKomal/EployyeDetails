@@ -1,80 +1,110 @@
 const constant = require("../constant.js")
 const mongoose = require('mongoose')
 const expenseModel = require('../model/expenseModel.js')
+var moment = require('moment')
 
-const isValid = function (value) {
-    if (typeof value == undefined || value == null || value.length == 0) return false
-    if (typeof value === 'string' && value.trim().length === 0) return false
-    return true
-  
-  }
-  const isValidObjectId = function (ObjectId) {
+
+const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
-  }
-  const isValidRequestBody = function (requestBody) {
+}
+const isValidRequestBody = function (requestBody) {
     return Object.keys(requestBody).length > 0
-  }
+}
+
 const createExpense = async function (req, res) {
-    const data = req.body
-    const{category,amount,date, remark} = data
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+    try {
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        let newCreateStatus = constant.httpCodes.NEWLYCREATED
+        const createExpenseDetail = req.body
+        const { category, amount, date, remark } = createExpenseDetail
+        let attendanceDate = moment(date, 'DD/MM/YYYY', true).format()
+        if (!/((\d{4}))/.test(date)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
+        }
+        if (!isValidRequestBody(createExpenseDetail)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.EMPTY, data: null })
+        }
+        let createExpenseData = await expenseModel.create(createExpenseDetail)
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.EXPENSE.SUCCESS, data: createExpenseData })
 
-     createExpenseData = await expenseModel.create(data)
-     return res.status(constant.httpCodes.NEWLYCREATED).send({ status: true, message: constant.messages.LEAVE.SUCCESS, data: createExpenseData })
-
-}
-
-const getExpenseData = async function (req, res){
-    const expenseId= req.query.expenseId
-
-   // console.log(data)
-    // console.log(expenseId)
-    if(expenseId){
-        const expenseDetailsById = await expenseModel.findById(expenseId)
-        if (expenseDetailsById) {
-            return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.GET, data:expenseDetailsById})    
-         }
     }
-   
-
- 
-    const getAllExpenseData = await expenseModel.find()
-    return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.GET, data: getAllExpenseData })
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
 }
 
-const updateExpenseData = async function(req,res){
-    const expenseId = req.query.expenseId
-   
-    let body = req.body
-    let updated = await expenseModel.findOneAndUpdate({_id:expenseId}, {$set :{body}}, { new: true })
-    res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updated });
+const getExpenseData = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+    try {
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        const expenseId = req.query.expenseId
+        
+
+        let expenseIdDetails = {}
+        if (expenseId) expenseIdDetails._id = expenseId
+        const getAllExpenseData = await expenseModel.find(expenseIdDetails)
+        return res.status(success).send({ status: true, message: constant.messages.EXPENSE.GET, data: getAllExpenseData })
+    }
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
 }
 
-const delteExpenseData= async function (req, res) {
+const updateExpenseData = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
+    try {
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const expenseId = req.query.expenseId
+        let updateExpenseBody = req.body
+        if (!isValidRequestBody(updateExpenseBody)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.EMPTY, data: null })
+        }
+        if (!isValidObjectId(expenseId)) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+          }
+        let findExpenseId = await expenseModel.findById(expenseId)
+        if (!findExpenseId) {
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        }
+
+        let updated = await expenseModel.updateOne({ _id: expenseId }, updateExpenseBody, { new: true })
+        res.status(success).send({ status: true, message: constant.messages.EXPENSE.UPDATE, data: findExpenseId })
+    }
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
+
+
+
+}
+
+const delteExpenseData = async function (req, res) {
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
     try {
 
-
-        let  expenseId= req.query.expenseId
-        console.log(expenseId)
-        //let userId = req.params.userId
-
+        const success = constant.httpCodes.HTTP_SUCCESS
+        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        let expenseId = req.query.expenseId
+      
         if (!isValidObjectId(expenseId)) {
-            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-        let delteExpenseData= await expenseModel.findById(expenseId)
-       // console.log(DelteLeave)
-
+        let delteExpenseData = await expenseModel.findById(expenseId)
         if (!delteExpenseData) {
-            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
         }
         const findExpenseData = await expenseModel.deleteOne(delteExpenseData)
         if (findExpenseData) {
-            return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: delteExpenseData})
+            return res.status(success).send({ status: true, message: constant.messages.EXPENSE.DELETE, data: delteExpenseData })
 
         }
-}
+    }
 
     catch (err) {
-        res.status(constant.httpCodes.HTTP_SERVER_ERROR).send({ status: false, message: err.message })
+        res.status(server).send({ status: false, message: err.message })
     }
 
 }
@@ -84,4 +114,4 @@ const delteExpenseData= async function (req, res) {
 
 
 
-module.exports ={createExpense, getExpenseData, updateExpenseData, delteExpenseData}
+module.exports = { createExpense, getExpenseData, updateExpenseData, delteExpenseData }
