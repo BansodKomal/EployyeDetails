@@ -12,10 +12,13 @@ const auth = async function (req, res, next) {
 
         }
         let decodedToken = jwt.verify(token, process.env.scretKey);
-        let userId = decodedToken.userId
+        console.log(decodedToken)
+       // let userId = decodedToken.userId
         if (!decodedToken) {
             return res.status(constant.httpCodes.HTTP_FORBIDDEN).send({ status: false, message: constant.messages.AUTHENTICATE.INVALID, data: null });
         }
+        let userId =await userModel.findOne({_id:decodedToken.userId})
+        console.log(userId)
   next()
     }
     catch (error) {
