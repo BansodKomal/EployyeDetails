@@ -3,6 +3,7 @@ const constant = require("../constant.js")
 const employeModel = require('../model/employeModel')
 const cloudinary = require('cloudinary').v2
 const mongoose = require('mongoose')
+//const upload = require('../util/cloudnariy')
 
 
 const isValid = function (value) {
@@ -11,6 +12,7 @@ const isValid = function (value) {
   return true
 
 }
+
 const isValidObjectId = function (ObjectId) {
   return mongoose.Types.ObjectId.isValid(ObjectId)
 }
@@ -34,7 +36,8 @@ const createEmploye = async function (req, res) {
     let newCreateStatus = constant.httpCodes.NEWLYCREATED
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
     let employeeData = req.body
-    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = employeeData
+    const file = req?.files?.documents
+     const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = employeeData
 
     if (!(/^([+]\d{2})?\d{10}$/.test(phone)))
       return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
@@ -42,11 +45,12 @@ const createEmploye = async function (req, res) {
     if (alreadyExsit) {
       return res.status(constant.httpCodes.HTTP_ALREADY_EXISTS).send({ status: false, message: constant.messages.SIGNUP.PHONE_ALREADY_USE, data: null })
     }
- 
-    if (req?.files?.documents) {
-      let file = req.files.documents
-
+   
+   if (req?.files?.documents) {
+    console.log("hscbjjem,oeigxej")
+  const file = req.files.documents
       cloudinary.uploader.upload(file.tempFilePath, async (err, result) => {
+        try {
         let employeeData = req.body
         let newCreateStatus = constant.httpCodes.NEWLYCREATED
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
@@ -66,30 +70,35 @@ const createEmploye = async function (req, res) {
           phone: phone,
           joiningDate: joiningDate,
           contract: contract,
-          documents: result.url,
+          documents:result.url,
           wfoWfh: wfoWfh,
           assets: assets,
           salary: salary,
-          documentsId: result.public_id
+          documentsId:result.public_id
         }
         let createEmployeeDetails = await employeModel.create(createEmployeeData)
         return res.status(newCreateStatus).send({ status: true, message: constant.messages.EMPLOYE.SUCCESS, data: createEmployeeDetails })
-      })
+      
     }
-    else {
-
-      employeeData.documents = "";
-
+  
+      catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+      }
+      
+    })
+ }
+   else {
+    console.log("else")
+    employeeData.documents = " ";
       let createEmployeeDetails = await employeModel.create(employeeData)
       return res.status(newCreateStatus).send({ status: true, message: constant.messages.EMPLOYE.SUCCESS, data: createEmployeeDetails })
-    }
+   }
   }
   catch (err) {
     res.status(server).send({ status: false, message: err.message })
   }
 
 }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getEmployeeById = async function (req, res) {
