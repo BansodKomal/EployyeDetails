@@ -80,7 +80,7 @@ const loginUser = async function (req, res) {
                 }, process.env.scretKey
 
             );
-            res.status(constant.httpCodes.HTTP_SUCCESS).setHeader("x-api-key", token);
+            res.status(constant.httpCodes.HTTP_SUCCESS).setHeader("authorization", token);
             return res.status(constant.httpCodes.HTTP_SUCCESS).send({ status: true, message: constant.messages.LOGIN.SUCCESS, data: token });
         }
 

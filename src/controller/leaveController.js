@@ -31,7 +31,6 @@ const createLeave = async function (req, res) {
         if (!isValidObjectId(employeId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-      //  let levaeDate = moment(date, 'DD/MM/YYYY', true).format()
         if (!/((\d{4}))/.test(fromDate)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
         }
@@ -59,12 +58,8 @@ const getLeaveData = async function (req, res) {
 
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
-        const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-
         let leaveId = req.query.leaveId
-
-       
-        const findObj = {};
+       const findObj = {};
         if (leaveId)
             findObj._id = leaveId;
 
@@ -120,9 +115,7 @@ const deleteLeaveById = async function (req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
 
     try {
-
-
-        const success = constant.httpCodes.HTTP_SUCCESS
+         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
         let leaveId = req.query.leaveId

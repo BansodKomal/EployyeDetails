@@ -60,7 +60,9 @@ module.exports =
         "PARAM":"this id is deleted or inccorect, please enter valid Id ",
         "ABCENTID":"id not present is db or it delete",
         "DELETE":"employee details is deleted successfully",
-        "EMPTY":"body not empty please enter some data"
+        "EMPTY":"body not empty please enter some data",
+        "S_DOCUMENT":"document upload successully",
+        "F_DOCUMENT":"fail to upload document"
 
       },
       "LEAVE":{
@@ -94,5 +96,7 @@ module.exports =
         "INVALID": "token userId and blogUserID is not same , please enter valid userid",
         "invaild":"userId and token userId not same"
       },
+
+  
 }
 }

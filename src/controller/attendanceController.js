@@ -64,7 +64,7 @@ const getAttendanceSheet = async function (req, res) {
         if (date) {
             attendanceObj.date = date
         }
-     
+
         const allEmployeData = await attendanceModel.find(attendanceObj)
         return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GET, count: allEmployeData.length, data: allEmployeData })
 
@@ -85,7 +85,7 @@ const updateAttendance = async function (req, res) {
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
         let updateAttendanceData = req.body
         let attendanceId = req.query.attendanceId
-        console.log(attendanceId);
+      
         const { date, employeeId, inTime, outTime } = updateAttendanceData
         if (!isValidObjectId(attendanceId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
@@ -96,8 +96,7 @@ const updateAttendance = async function (req, res) {
         }
 
         const AteendanceByEmployeeId = await attendanceModel.findById(attendanceId)
-        // console.log(AteendanceByEmployeeId)
-
+     
         let updateAttendance = await attendanceModel.updateOne({ _id: attendanceId }, updateAttendanceData, { new: true })
 
         res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: AteendanceByEmployeeId })
