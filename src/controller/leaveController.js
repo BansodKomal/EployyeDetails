@@ -21,7 +21,7 @@ const createLeave = async function (req, res) {
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
         let createLeaveData = req.body
-        employeId = req.params.employeId
+        employeId = req.query.employeId
         const { name, fromDate, toDate, remark } = createLeaveData
 
         if (!isValidRequestBody(createLeaveData)) {
@@ -83,7 +83,7 @@ const updateLeave = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-        let leaveId = req.params.leaveId
+        let leaveId = req.query.leaveId
 
         let updateLeaveBody = req.body
 
@@ -118,7 +118,7 @@ const deleteLeaveById = async function (req, res) {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-        let leaveId = req.params.leaveId
+        let leaveId = req.query.leaveId
 
         if (!isValidObjectId(leaveId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })

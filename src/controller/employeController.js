@@ -90,7 +90,7 @@ const updateEmployee = async function (req, res) {
     const success = constant.httpCodes.HTTP_SUCCESS
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-    let employeId = req.params.employeId
+    let employeId = req.query.employeId
     let updateEmployeeBody = req.body
 
     if (!isValidRequestBody(updateEmployeeBody)) {
@@ -125,7 +125,7 @@ const deleteEmpleById = async function (req, res) {
     const success = constant.httpCodes.HTTP_SUCCESS
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-    let employeId = req.params.employeId
+    let employeId = req.query.employeId
 
 
     if (!isValidObjectId(employeId)) {

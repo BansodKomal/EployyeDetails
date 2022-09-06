@@ -11,53 +11,52 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-
-
-const createDetails = async function (req, res) {
+const createDetails = async function getEmployee(req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
 
-    // try {
-    let newCreateStatus = constant.httpCodes.NEWLYCREATED
-    // const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-    // const attendanceBody = req.body
-    // const { date, employee } = attendanceBody
+    try {
+        let newCreateStatus = constant.httpCodes.NEWLYCREATED
 
-    const axios = require('axios')
-    const url = 'https://employee-deteils.herokuapp.com/getEmployee'
-    console.log(url)
+        const attendanceBody = req.body
+        const response = await axios.get('http://localhost:3000/getEmployee');
 
-     const response = axios.get(url)
-      console.log(response);
+        const { date, employee } = attendanceBody
+        let attendance = response.data.data
+        let arr = []
+
+        for (const empl of attendance) {
+            const obj = {}
+
+            obj.employeId = empl._id
+
+            for (const emp of employee) {
+                let createDetails = {}
+
+                createDetails.date = date
+                createDetails.employeeId = empl._id,
+                createDetails.inTime = emp.inTime,
+                createDetails.outTime = emp.outTime
+                arr.push(createDetails)
+                console.log(createDetails)
+
+            }
 
 
-    axios.get(url)
-        .then((response) => {
-           // console.log(response)
-        })
-        .catch(function (error) {
-            //console.log(error);
-        })
-    // let arr = []
-    // for (const ele of employee) {
-    //     let createDetails = {}
 
-    //     createDetails.date = date
-    //     createDetails.employeeId = ele.employeeId,
-    //         createDetails.inTime = ele.inTime,
-    //         createDetails.outTime = null
-    //     arr.push(createDetails)
+        }
 
-    // }
+        const createAttendaceDetails = await attendanceModel.create(arr)
 
-    //const createAttendaceDetails = await attendanceModel.create(arr)
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
 
-    // return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
+    }
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
+
 }
 
-//     catch (err) {
-//         res.status(server).send({ status: false, message: err.message })
-//     }
-// }
+
 
 const updateAttendance = async function (req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
@@ -66,11 +65,11 @@ const updateAttendance = async function (req, res) {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
         let updateAttendanceData = req.body
-        let attendanceId = req.params.attendanceId
-        // let date = req.params.date
+        //  let attendanceId = req.params.attendanceId
+        let date = req.query.date
 
 
-        const { date, inTime, outTime } = updateAttendanceData
+        const { inTime, outTime } = updateAttendanceData
 
 
         if (!isValidObjectId(attendanceId)) {
@@ -81,7 +80,7 @@ const updateAttendance = async function (req, res) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
         }
 
-        let updateAttendance = await attendanceModel.updateOne(AteendanceByEmployeeId, updateAttendanceData, { new: true })
+        let updateAttendance = await attendanceModel.updat(AteendanceByEmployeeId, updateAttendanceData, { new: true })
 
         console.log(updateAttendance)
 

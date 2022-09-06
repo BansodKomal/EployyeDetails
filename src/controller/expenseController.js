@@ -85,7 +85,7 @@ const delteExpenseData = async function (req, res) {
 
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-        let expenseId = req.params.expenseId
+        let expenseId = req.query.expenseId
 
         if (!isValidObjectId(expenseId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
