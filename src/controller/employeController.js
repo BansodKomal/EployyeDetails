@@ -36,8 +36,9 @@ const createEmploye = async function (req, res) {
     let newCreateStatus = constant.httpCodes.NEWLYCREATED
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
     let employeeData = req.body
+
     const file = req?.files?.documents
-    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary } = employeeData
+    const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary, documentsId } = employeeData
 
     if (!(/^([+]\d{2})?\d{10}$/.test(phone)))
       return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
@@ -46,8 +47,10 @@ const createEmploye = async function (req, res) {
       return res.status(constant.httpCodes.HTTP_ALREADY_EXISTS).send({ status: false, message: constant.messages.SIGNUP.PHONE_ALREADY_USE, data: null })
     }
     let createEmployeeDetails = await employeModel.create(employeeData)
+
     return res.status(newCreateStatus).send({ status: true, message: constant.messages.EMPLOYE.SUCCESS, data: createEmployeeDetails })
   }
+
 
   catch (err) {
     res.status(server).send({ status: false, message: err.message })
@@ -87,7 +90,7 @@ const updateEmployee = async function (req, res) {
     const success = constant.httpCodes.HTTP_SUCCESS
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-    let employeId = req.query.employeId
+    let employeId = req.params.employeId
     let updateEmployeeBody = req.body
 
     if (!isValidRequestBody(updateEmployeeBody)) {
@@ -122,25 +125,23 @@ const deleteEmpleById = async function (req, res) {
     const success = constant.httpCodes.HTTP_SUCCESS
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-    let employeId = req.query.employeId
+    let employeId = req.params.employeId
 
 
     if (!isValidObjectId(employeId)) {
       return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
     }
 
-    let delteEmployeesDetail = await employeModel.findById(employeId)
-    
-    if (!delteEmployeesDetail) {
-      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-    }
-    const deleteId = await cloudinary.uploader.destroy(delteEmployeesDetail.documentsId)
-    const findEmployeId = await employeModel.deleteOne(delteEmployeesDetail)
+   
+    // const deleteId = await cloudinary.uploader.destroy(delteEmployeesDetail.documentsId)
+    const findEmployeId = await employeModel.findOneAndDelete({ '_id': employeId })
     if (findEmployeId) {
-      return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: delteEmployeesDetail })
+      return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: findEmployeId})
 
-    }
-  }
+    }else 
+    return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+}
+  
   catch (err) {
     res.status(server).send({ status: false, message: err.message })
   }

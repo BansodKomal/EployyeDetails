@@ -16,35 +16,30 @@ router.post("/loginUser", userController.loginUser)
 ////////////////////////////////////////////////////////////////////////////////
 
 router.post("/create", middleware.auth, employeeController.createEmploye)
-router.get("/getEmployee"
-
-,  middleware.auth,employeeController.getEmployeeById)
-router.put("/updateEmploye", middleware.auth,employeeController.updateEmployee)
-router.delete("/delete",middleware.auth, employeeController.deleteEmpleById)
+router.get("/getEmployee",  middleware.auth,employeeController.getEmployeeById)
+router.put("/updateEmploye/:employeId", middleware.auth,employeeController.updateEmployee)
+router.delete("/delete/:employeId",middleware.auth, employeeController.deleteEmpleById)
 
 //////////////////////////////////////////////////////////////////////////////
 
 router.post("/createLeave/:employeId", middleware.auth,leaveController.createLeave)
 router.get("/getLeave",middleware.auth, leaveController.getLeaveData)
-router.put("/updateLeave",middleware.auth, leaveController.updateLeave)
-router.delete("/deleteLeaveIdById", leaveController.deleteLeaveById)
+router.put("/updateLeave/:leaveId",middleware.auth, leaveController.updateLeave)
+router.delete("/deleteLeaveIdById/:leaveId", leaveController.deleteLeaveById)
  
 /////////////////////////////////////////////
 router.post("/createExpense", middleware.auth,expenseController.createExpense)
 router.get("/getExpenseData", middleware.auth,expenseController.getExpenseData)
 router.put("/updateExpenseData", middleware.auth,expenseController.updateExpenseData)
-router.delete("/deleteExpense", middleware.auth,expenseController.delteExpenseData)
-
-///////////////////////////////////////
-router.post("/createAttendaceDetails",middleware.auth, attendanceController.createAttendaceDetails)
-router.get("/getAttendance", middleware.auth,attendanceController.getAttendanceSheet)
-router.put("/updateAttendance", middleware.auth,attendanceController.updateAttendance)
-router.delete("/delteAttendanceId",middleware.auth, attendanceController.deleteAttendanceData)
-
+router.delete("/deleteExpense/:expenseId", middleware.auth,expenseController.delteExpenseData)
 
 
 ////////////////////////////////////////////////////////
 router.post("/uploadImage", until.upload)
+router.post("/attendanceCrete", attendanceController.createDetails)
+router.put("/update/:attendanceId", attendanceController.updateAttendance)
+router.get("/getAttendaceByDate", attendanceController.getAttendaceByDate)
+router.delete("/deleteAttendanceById/:date", attendanceController.deleteAttendanceById)
 
 
 module.exports = router;

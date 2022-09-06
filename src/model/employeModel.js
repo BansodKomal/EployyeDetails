@@ -4,20 +4,20 @@ const EmployeeSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        required: true
+         required: true
     },
     address: {
         type: String
-        
+
     },
     phone: {
-       type: Number,
-       required: true,
-       unique: true
+        type: Number,
+
+        // unique: true
     },
     joiningDate: {
         type: Date,
-        required: true,
+
         dafault: Date.now()
 
     },
@@ -26,22 +26,22 @@ const EmployeeSchema = new mongoose.Schema({
     },
     documents: {
         type: Array,
-        required: true
+        //required: true
     },
     wfoWfh: {
         type: String
     },
-    assets:{
-        type:String
+    assets: {
+        type: String
     },
     salary: {
         type: Number,
-        required: true
+         required: true
     },
-    documentsId:{
-        type:String,
-        default:""
-      
+    documentsId: {
+        type: String,
+        default: ""
+
     }
 }, { timestamps: true }
 )

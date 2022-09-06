@@ -59,7 +59,7 @@ const getLeaveData = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         let leaveId = req.query.leaveId
-       const findObj = {};
+        const findObj = {};
         if (leaveId)
             findObj._id = leaveId;
 
@@ -83,7 +83,7 @@ const updateLeave = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-        let leaveId = req.query.leaveId
+        let leaveId = req.params.leaveId
 
         let updateLeaveBody = req.body
 
@@ -112,36 +112,29 @@ const updateLeave = async function (req, res) {
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 const deleteLeaveById = async function (req, res) {
-    const server = constant.httpCodes.HTTP_SERVER_ERROR
 
+    const server = constant.httpCodes.HTTP_SERVER_ERROR
     try {
-         const success = constant.httpCodes.HTTP_SUCCESS
+        const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
 
-        let leaveId = req.query.leaveId
+        let leaveId = req.params.leaveId
 
         if (!isValidObjectId(leaveId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-        let delteLeave = await leaveModel.findById(leaveId)
+        const delteLeaveDetail = await leaveModel.findOneAndDelete({ '_id': leaveId })
+        if (delteLeaveDetail) {
+            return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: delteLeaveDetail })
 
-        if (!delteLeave) {
+        } else
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        }
-        const findLeaveId = await leaveModel.deleteOne(delteLeave)
-        if (findLeaveId) {
-            return res.status(success).send({ status: true, message: constant.messages.LEAVE.DELETE, data: delteLeave })
-
-        }
     }
-
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
 
 }
-
-
 
 
 module.exports = { createLeave, getLeaveData, updateLeave, deleteLeaveById }

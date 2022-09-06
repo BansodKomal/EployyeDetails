@@ -20,13 +20,13 @@ const userCreate = async function (req, res) {
         let userData = req.body
         const { name, email, phone, password } = userData
         if (!(/^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/.test(email)))
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDEMAIL, data: null })
+            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDEMAIL, data: null })
 
         if (!(/^[a-zA-Z0-9!@#$%^&*]{8,15}$/.test(password))) {
             return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPASSWORD, data: null })
         }
         if (!(/^([+]\d{2})?\d{10}$/.test(phone)))
-        return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
+            return res.status(constant.httpCodes.HTTP_BAD_REQUEST).send({ status: false, message: constant.messages.SIGNUP.VALIDPHONE, data: null })
         let savedData = await userModel.create(userData)
         return res.status(constant.httpCodes.NEWLYCREATED).send({ status: true, message: constant.messages.SIGNUP.SUCCESS, data: savedData })
 

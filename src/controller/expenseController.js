@@ -40,8 +40,6 @@ const getExpenseData = async function (req, res) {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
         const expenseId = req.query.expenseId
-        
-
         let expenseIdDetails = {}
         if (expenseId) expenseIdDetails._id = expenseId
         const getAllExpenseData = await expenseModel.find(expenseIdDetails)
@@ -64,7 +62,7 @@ const updateExpenseData = async function (req, res) {
         }
         if (!isValidObjectId(expenseId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-          }
+        }
         let findExpenseId = await expenseModel.findById(expenseId)
         if (!findExpenseId) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
@@ -87,20 +85,18 @@ const delteExpenseData = async function (req, res) {
 
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-        let expenseId = req.query.expenseId
-      
+        let expenseId = req.params.expenseId
+
         if (!isValidObjectId(expenseId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-        let delteExpenseData = await expenseModel.findById(expenseId)
-        if (!delteExpenseData) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        }
-        const findExpenseData = await expenseModel.deleteOne(delteExpenseData)
+       
+        const findExpenseData = await expenseModel.findOneAndDelete({ '_id': expenseId  })
         if (findExpenseData) {
-            return res.status(success).send({ status: true, message: constant.messages.EXPENSE.DELETE, data: delteExpenseData })
+            return res.status(success).send({ status: true, message: constant.messages.EXPENSE.DELETE, data: findExpenseData})
 
-        }
+        }else 
+        return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
     }
 
     catch (err) {
