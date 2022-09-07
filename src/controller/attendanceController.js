@@ -20,29 +20,24 @@ const createDetails = async function getEmployee(req, res) {
         const attendanceBody = req.body
         const response = await axios.get('http://localhost:3000/getEmployee');
 
-        const { date, employee } = attendanceBody
+        const { date, inTime, outTime } = attendanceBody
         let attendance = response.data.data
         let arr = []
-
         for (const empl of attendance) {
             const obj = {}
 
             obj.employeId = empl._id
 
-            for (const emp of employee) {
+            {
                 let createDetails = {}
 
                 createDetails.date = date
                 createDetails.employeeId = empl._id,
-                createDetails.inTime = emp.inTime,
-                createDetails.outTime = emp.outTime
+                    createDetails.inTime = inTime,
+                    createDetails.outTime = outTime
                 arr.push(createDetails)
-                console.log(createDetails)
 
             }
-
-
-
         }
 
         const createAttendaceDetails = await attendanceModel.create(arr)
@@ -50,6 +45,7 @@ const createDetails = async function getEmployee(req, res) {
         return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
 
     }
+
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
@@ -57,6 +53,7 @@ const createDetails = async function getEmployee(req, res) {
 }
 
 
+/////////////////////////////////////////////////////////////
 
 const updateAttendance = async function (req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
@@ -64,30 +61,27 @@ const updateAttendance = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+
+
         let updateAttendanceData = req.body
-        //  let attendanceId = req.params.attendanceId
         let date = req.query.date
+        const { employee } = updateAttendanceData
 
+        let arr = []
+        for (const empl in employee) {
 
-        const { inTime, outTime } = updateAttendanceData
+            var data = employee[empl]
+            arr.push(data)
+            console.log(data.employeeId)
 
+  }
+  let findId = await employeModel.findById({ "_id": data.employeeId })
+        
 
-        if (!isValidObjectId(attendanceId)) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
-        }
-        const AteendanceByEmployeeId = await attendanceModel.findById(attendanceId)
-        if (!AteendanceByEmployeeId) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        }
-
-        let updateAttendance = await attendanceModel.updat(AteendanceByEmployeeId, updateAttendanceData, { new: true })
-
-        console.log(updateAttendance)
-
-        res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: AteendanceByEmployeeId })
-
-    }
-
+     let updateAttendance = await attendanceModel.findAndUpdateOne({employeeId:findId._id}, { $set: data  }, { new: true })
+     
+    return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: updateAttendance })
+}
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
@@ -183,3 +177,8 @@ module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAt
         // if (!delteAttendanceId) {
         //     return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
         // }
+         // obj.inTime = empl.inTime
+            // obj.outTime= empl.outTime
+          //  console.log(a.employeeId)
+         // console.log(employee[empl])
+         // console.log(obj)

@@ -22,7 +22,7 @@ router.delete("/delete",middleware.auth, employeeController.deleteEmpleById)
 
 //////////////////////////////////////////////////////////////////////////////
 
-router.post("/createLeave/:employeId", middleware.auth,leaveController.createLeave)
+router.post("/createLeave", middleware.auth,leaveController.createLeave)
 router.get("/getLeave",middleware.auth, leaveController.getLeaveData)
 router.put("/updateLeave",middleware.auth, leaveController.updateLeave)
 router.delete("/deleteLeaveIdById", leaveController.deleteLeaveById)
@@ -37,7 +37,7 @@ router.delete("/deleteExpense", middleware.auth,expenseController.delteExpenseDa
 ////////////////////////////////////////////////////////
 router.post("/uploadImage", until.upload)
 router.post("/attendanceCrete", attendanceController.createDetails)
-router.put("/update/:attendanceId", attendanceController.updateAttendance)
+router.put("/update", attendanceController.updateAttendance)
 router.get("/getAttendaceByDate", attendanceController.getAttendaceByDate)
 router.delete("/deleteAttendanceById/:date", attendanceController.deleteAttendanceById)
 
