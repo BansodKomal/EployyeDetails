@@ -61,8 +61,6 @@ const updateAttendance = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-
-
         let updateAttendanceData = req.body
         let date = req.query.date
         const { employee } = updateAttendanceData
@@ -72,22 +70,17 @@ const updateAttendance = async function (req, res) {
 
             var data = employee[empl]
             arr.push(data)
-            console.log(data.employeeId)
+        }
+        let updateAttendance = await attendanceModel.update({ employeeId: data.employeeId }, { $set: data }, { new: true })
 
-  }
-  let findId = await employeModel.findById({ "_id": data.employeeId })
-        
-
-     let updateAttendance = await attendanceModel.findAndUpdateOne({employeeId:findId._id}, { $set: data  }, { new: true })
-     
-    return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: updateAttendance })
-}
+        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: updateAttendance })
+    }
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
 
-}
 
+}
 const getAttendaceByDate = async function (req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
 
@@ -95,14 +88,24 @@ const getAttendaceByDate = async function (req, res) {
 
         const success = constant.httpCodes.HTTP_SUCCESS
         let date = req.query.date
+        let presentEmployee = req.query.presentEmployee
+        let absentEMployee = req.query.absentEMployee
         let attendanceObj = {}
         if (date) {
             attendanceObj.date = date
         }
 
-        let attendance = await attendanceModel.find(attendanceObj)
-
-        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GET, count: attendance.length, data: attendance })
+         let attendance = await attendanceModel.find(attendanceObj)
+ 
+      if (attendance) {
+       
+          absentEMployee = await attendanceModel.find({$and:[{date:date},{inTime:null}, {outTime:null}]}).count()
+      
+          presentEmployee =  attendance.length - absentEMployee
+        console.log(presentEmployee)
+          
+       }
+        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GETDATA,totalEmployee: attendance.length,presentEmployee:presentEmployee,absentEMployee:absentEMployee, data: attendance })
     }
 
     catch (err) {
@@ -119,8 +122,8 @@ const deleteAttendanceById = async function (req, res) {
     try {
         const success = constant.httpCodes.HTTP_SUCCESS
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
+        let date = req.query.date
 
-        let date = req.params.date
 
         const findAttendanceId = await attendanceModel.deleteMany({ date: date })
         if (findAttendanceId) {
@@ -167,9 +170,7 @@ module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAt
 
 
 
-
-
-        //     if (!isValidObjectId(attendanceId)) {
+//     if (!isValidObjectId(attendanceId)) {
         //         return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         //     }
         //   //  let delteAttendanceId = await attendanceModel.findById(attendanceId)
@@ -182,3 +183,4 @@ module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAt
           //  console.log(a.employeeId)
          // console.log(employee[empl])
          // console.log(obj)
+
