@@ -4,6 +4,7 @@ const employeModel = require('../model/employeModel')
 const mongoose = require('mongoose')
 const ObjectId = mongoose.Schema.Types.ObjectId
 var moment = require('moment')
+const { parseTwoDigitYear } = require("moment")
 const axios = require('axios').default;
 
 
@@ -22,9 +23,12 @@ const createDetails = async function getEmployee(req, res) {
     try {
         let newCreateStatus = constant.httpCodes.NEWLYCREATED
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
-const success = constant.httpCodes.HTTP_SUCCESS
+        const success = constant.httpCodes.HTTP_SUCCESS
         const attendanceBody = req.body
+        //
+
         const response = await axios.get('http://localhost:3000/getEmployee');
+
 
         const { date, inTime, outTime } = attendanceBody
 
@@ -32,11 +36,14 @@ const success = constant.httpCodes.HTTP_SUCCESS
             return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
         }
 
+        let attendanceData = await attendanceModel.find({ "date": date })
+        let employee = await employeModel.find()
+
        
-    
-        let attendance = response.data.data
         let arr = []
-        for (const empl of attendance) {
+        if(attendanceData.length==0){
+        for (empl of employee) {
+
             const obj = {}
 
             obj.employeId = empl._id
@@ -52,23 +59,43 @@ const success = constant.httpCodes.HTTP_SUCCESS
 
             }
         }
-       
-  
-    const createAttendaceDetails = await attendanceModel.create(arr)
-     
-    //return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceData})
-        
-           // const createAttendaceDetails = await attendanceModel.create(arr)
+
+        const createAttendaceDetails = await attendanceModel.create(arr)
+
 
         return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
-    
-}
-   
-    
-
-    catch (err) {
-        res.status(server).send({ status: false, message: err.message })
+        
     }
+        if (attendanceData.length !== 0) {
+            let data = []
+            for (var a of employee) {
+
+                const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
+                if (isAttendace && isAttendace.length) {
+                    data.push(isAttendace[0])
+                }
+                else {
+                    data.push({
+                        employeeId: a._id,
+                        inTime: null,
+                        outTime: null
+                    })
+                }
+
+            }
+        }
+        const newAttendance = await attendanceModel.create(data)
+
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: newAttendance })
+
+    }
+
+  
+
+
+catch (err) {
+    res.status(server).send({ status: false, message: err.message })
+}
 
 }
 
@@ -93,12 +120,12 @@ const updateAttendance = async function (req, res) {
 
             let updateAttendance = await attendanceModel.updateMany({ employeeId: data.employeeId }, { $set: data }, { new: true })
 
-        
+
         }
 
-        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data:updateAttendanceData})
+        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: updateAttendanceData })
     }
-    
+
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
@@ -114,14 +141,11 @@ const getAttendaceByDate = async function (req, res) {
         let date = req.query.date
         let presentEmployee = req.query.presentEmployee
         let absentEMployee = req.query.absentEMployee
+
         let attendanceObj = {}
         if (date) {
             attendanceObj.date = date
         }
-        
-        const response = await axios.get('http://localhost:3000/getEmployee');
-
-       
 
         if (!validateDate(date)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
@@ -136,33 +160,11 @@ const getAttendaceByDate = async function (req, res) {
             console.log(presentEmployee)
 
         }
-        if(!attendance1){
-    
-        let attendance = response.data.data
-        let arr = []
-        for (const empl of attendance) {
-            const obj = {}
 
-            obj.employeId = empl._id
 
-            {
-                let createDetails = {}
-
-                createDetails.date = date
-                createDetails.employeeId = empl._id,
-                    createDetails.inTime = empl.inTime,
-                    createDetails.outTime = empl.outTime
-                arr.push(createDetails)
-
-            }
-        }
-
-        return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GETDATA, totalEmployee: attendance.length, presentEmployee: presentEmployee, absentEMployee: absentEMployee, data: arr})
-    }  
-        else
         return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GETDATA, totalEmployee: attendance1.length, presentEmployee: presentEmployee, absentEMployee: absentEMployee, data: attendance1 })
     }
-    
+
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }

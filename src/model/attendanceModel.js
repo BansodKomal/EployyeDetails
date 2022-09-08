@@ -4,7 +4,7 @@ const AttendanceSchema = new mongoose.Schema({
 
     date: {
         type: String,
-        required: true,
+       // required: true,
     },
     employeeId: {
         type: ObjectId,
