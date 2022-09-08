@@ -98,7 +98,7 @@ const updateLeave = async function (req, res) {
         if (!checkLeaveId) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
         }
-        let updated = await leaveModel.updateOne({ _id: leaveId }, updateLeaveBody, { new: true })
+        let updated = await leaveModel.findOneAndUpdate({ _id: leaveId }, updateLeaveBody, { new: true })
         res.status(success).send({ status: true, message: constant.messages.LEAVE.UPDATE, data: checkLeaveId });
 
     }

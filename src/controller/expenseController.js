@@ -64,12 +64,12 @@ const updateExpenseData = async function (req, res) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
         let findExpenseId = await expenseModel.findById(expenseId)
-        if (!findExpenseId) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        }
+        // if (!findExpenseId) {
+        //     return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        // }
 
-        let updated = await expenseModel.updateOne({ _id: expenseId }, updateExpenseBody, { new: true })
-        res.status(success).send({ status: true, message: constant.messages.EXPENSE.UPDATE, data: findExpenseId })
+        let updatedExpenseId = await expenseModel.findOneAndUpdate({ _id: expenseId }, updateExpenseBody, { new: true })
+        res.status(success).send({ status: true, message: constant.messages.EXPENSE.UPDATE, data:  updatedExpenseId })
     }
     catch (err) {
         res.status(server).send({ status: false, message: err.message })

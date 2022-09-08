@@ -4,21 +4,21 @@ const AttendanceSchema = new mongoose.Schema({
 
     date: {
         type: String,
-        required:true,
+        required: true,
     },
     employeeId: {
         type: ObjectId,
-      //  required:true,
+        //  required:true,
         ref: "Employee"
 
     },
     inTime: {
         type: String,
-       default:null
+        default: null
     },
     outTime: {
         type: String,
-        default:null
+        default: null
     }
 
 

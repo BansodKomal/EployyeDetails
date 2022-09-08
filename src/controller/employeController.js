@@ -3,7 +3,7 @@ const constant = require("../constant.js")
 const employeModel = require('../model/employeModel')
 const cloudinary = require('cloudinary').v2
 const mongoose = require('mongoose')
-
+const axios = require('axios').default;
 
 
 const isValid = function (value) {
@@ -36,7 +36,8 @@ const createEmploye = async function (req, res) {
     let newCreateStatus = constant.httpCodes.NEWLYCREATED
     const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
     let employeeData = req.body
-
+    // const response = await axios.post('http://localhost:3000/uploadImage');
+    // console.log(response)
     const file = req?.files?.documents
     const { name, address, phone, joiningDate, contract, documents, wfoWfh, assets, salary, documentsId } = employeeData
 
@@ -107,8 +108,8 @@ const updateEmployee = async function (req, res) {
     }
 
 
-    let updatedEmployeeDetails = await employeModel.updateOne({ _id: employeId }, updateEmployeeBody, { new: true })
-    res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: checkEmployeId });
+    let updatedEmployeeDetails = await employeModel.findOneAndUpdate({ _id: employeId }, updateEmployeeBody, { new: true })
+    res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updatedEmployeeDetails});
   }
 
   catch (err) {

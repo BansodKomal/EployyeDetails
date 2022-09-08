@@ -36,10 +36,10 @@ router.delete("/deleteExpense", middleware.auth,expenseController.delteExpenseDa
 
 ////////////////////////////////////////////////////////
 router.post("/uploadImage", until.upload)
-router.post("/attendanceCrete", attendanceController.createDetails)
+router.post("/attendanceCreate", attendanceController.createDetails)
 router.put("/update", attendanceController.updateAttendance)
 router.get("/getAttendaceByDate", attendanceController.getAttendaceByDate)
-router.delete("/deleteAttendanceById/:date", attendanceController.deleteAttendanceById)
+router.delete("/deleteAttendanceById", attendanceController.deleteAttendanceById)
 
 
 module.exports = router;
