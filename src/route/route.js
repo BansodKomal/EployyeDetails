@@ -15,7 +15,7 @@ router.post("/loginUser", userController.loginUser)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-router.post("/create", middleware.auth, employeeController.createEmploye)
+router.post("/create", employeeController.createEmploye)
 router.get("/getEmployee",employeeController.getEmployeeById)
 router.put("/updateEmploye", middleware.auth,employeeController.updateEmployee)
 router.delete("/delete",middleware.auth, employeeController.deleteEmpleById)

@@ -27,7 +27,7 @@ const createDetails = async function getEmployee(req, res) {
         const attendanceBody = req.body
         //
 
-        const response = await axios.get('http://localhost:3000/getEmployee');
+
 
 
         const { date, inTime, outTime } = attendanceBody
@@ -38,64 +38,67 @@ const createDetails = async function getEmployee(req, res) {
 
         let attendanceData = await attendanceModel.find({ "date": date })
         let employee = await employeModel.find()
-
+        let data = []
+        //if (attendanceData.length !== 0) {
        
-        let arr = []
-        if(attendanceData.length==0){
-        for (empl of employee) {
-
-            const obj = {}
-
-            obj.employeId = empl._id
-
-            {
-                let createDetails = {}
-
-                createDetails.date = date
-                createDetails.employeeId = empl._id,
-                    createDetails.inTime = empl.inTime,
-                    createDetails.outTime = empl.outTime
-                arr.push(createDetails)
-
+        for (var a of employee) {
+            const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
+            console.log(isAttendace)
+            if (isAttendace && isAttendace.length) {
+          data.push(isAttendace[0])
+     
             }
-        }
-
-        const createAttendaceDetails = await attendanceModel.create(arr)
-
-
-        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
-        
-    }
-        if (attendanceData.length !== 0) {
-            let data = []
-            for (var a of employee) {
-
-                const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
-                if (isAttendace && isAttendace.length) {
-                    data.push(isAttendace[0])
-                }
-                else {
-                    data.push({
-                        employeeId: a._id,
-                        inTime: null,
-                        outTime: null
-                    })
-                }
-
+            else {
+                data.push({
+                    date: date,
+                    employeeId: a._id,
+                    inTime: null,
+                    outTime: null
+                })
             }
+
         }
+        // }
         const newAttendance = await attendanceModel.create(data)
+
+
+
+
+
+        //     let arr = []
+        //     if(attendanceData.length==0){
+        //     for (empl of employee) {
+
+        //         const obj = {}
+
+        //         obj.employeId = empl._id
+
+        //         {
+        //             let createDetails = {}
+
+        //             createDetails.date = date
+        //             createDetails.employeeId = empl._id,
+        //                 createDetails.inTime = empl.inTime,
+        //                 createDetails.outTime = empl.outTime
+        //             arr.push(createDetails)
+
+        //         }
+        //     }
+
+        //     const createAttendaceDetails = await attendanceModel.create(arr)
+
+
+        //     return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
+
+
+        // }
 
         return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: newAttendance })
 
     }
-
-  
-
-
-catch (err) {
-    res.status(server).send({ status: false, message: err.message })
-}
+    catch (err) {
+        res.status(server).send({ status: false, message: err.message })
+    }
 
 }
 
@@ -147,9 +150,7 @@ const getAttendaceByDate = async function (req, res) {
             attendanceObj.date = date
         }
 
-        if (!validateDate(date)) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
-        }
+
         let attendance1 = await attendanceModel.find(attendanceObj)
 
         if (attendance1) {
@@ -194,6 +195,13 @@ const deleteAttendanceById = async function (req, res) {
     }
 
 }
+
+
+
+
+
+
+
 
 module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAttendanceById }
 
