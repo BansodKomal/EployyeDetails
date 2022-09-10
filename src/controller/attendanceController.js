@@ -25,77 +25,97 @@ const createDetails = async function getEmployee(req, res) {
         const badRequest = constant.httpCodes.HTTP_BAD_REQUEST
         const success = constant.httpCodes.HTTP_SUCCESS
         const attendanceBody = req.body
-        //
-
-
-
-
         const { date, inTime, outTime } = attendanceBody
 
-        if (!validateDate(date)) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
-        }
-
-        let attendanceData = await attendanceModel.find({ "date": date })
+        // if (!validateDate(date)) {
+        //     return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
+        // }
         let employee = await employeModel.find()
+        let attendanceData = await attendanceModel.find({ "date": date })
         let data = []
-        //if (attendanceData.length !== 0) {
-       
+
+
         for (var a of employee) {
-            const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
-            console.log(isAttendace)
-            if (isAttendace && isAttendace.length) {
-          data.push(isAttendace[0])
-     
-            }
-            else {
+            let attendanceData = await attendanceModel.find({ "date": date, "employeeId": a._id })
+
+            if (attendanceData.length) {
+                let obj = {}
+                console.log("klhjhg")
+                obj.date = date,
+                    obj.employeeId = a._id,
+                    obj.inTime = null,
+                    obj.outTime = null
+                data.push(obj)
+               
+            } else {
+
                 data.push({
                     date: date,
                     employeeId: a._id,
                     inTime: null,
                     outTime: null
+                    
+
                 })
+                console.log("oiujyf")
+               // const newAttendance = await attendanceModel.create(data)
+               // return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceData })
+                
             }
 
         }
-        // }
-        const newAttendance = await attendanceModel.create(data)
+
+    
+    
+
+    //     let arr = []
+
+    //         for (empl of employee) {
+    //  console.log("hjggdfg")
+    //           let createDetails = {}
+
+    //                 createDetails.date = date
+    //                 createDetails.employeeId = empl._id,
+    //                     createDetails.inTime = empl.inTime,
+    //                     createDetails.outTime = empl.outTime
+    //                 arr.push(createDetails)
 
 
 
+    //         const createAttendaceDetails = await attendanceModel.create(arr)
+    //         }
 
 
-        //     let arr = []
-        //     if(attendanceData.length==0){
-        //     for (empl of employee) {
 
-        //         const obj = {}
-
-        //         obj.employeId = empl._id
-
-        //         {
-        //             let createDetails = {}
-
-        //             createDetails.date = date
-        //             createDetails.employeeId = empl._id,
-        //                 createDetails.inTime = empl.inTime,
-        //                 createDetails.outTime = empl.outTime
-        //             arr.push(createDetails)
-
-        //         }
-        //     }
-
-        //     const createAttendaceDetails = await attendanceModel.create(arr)
+    //         return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: arr})
 
 
-        //     return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
+    //  return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
 
+    // console.log(a._id);
 
-        // }
+    //         const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
+    //         console.log(isAttendace.length);
+    //         if (isAttendace && isAttendace.length) {
+    //             data.push(isAttendace[0])
+    //         }
+    //         else {
+    //             console.log("in else");
+    //             data.push({
+    //                 date: date,
+    //                 employeeId: a._id,
+    //                 inTime: null,
+    //                 outTime: null
+    //             })
+    //             const newAttendance = await attendanceModel.create(data)
+    //         }
+    //         return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceData })
+    //     }
 
-        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: newAttendance })
+    const newAttendance = await attendanceModel.create(data)
+    return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceData })
 
-    }
+}
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
@@ -122,18 +142,13 @@ const updateAttendance = async function (req, res) {
             arr.push(data)
 
             let updateAttendance = await attendanceModel.updateMany({ employeeId: data.employeeId }, { $set: data }, { new: true })
-
-
         }
-
         return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.UPDATE, data: updateAttendanceData })
     }
 
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
     }
-
-
 }
 const getAttendaceByDate = async function (req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
@@ -149,8 +164,6 @@ const getAttendaceByDate = async function (req, res) {
         if (date) {
             attendanceObj.date = date
         }
-
-
         let attendance1 = await attendanceModel.find(attendanceObj)
 
         if (attendance1) {
@@ -161,8 +174,6 @@ const getAttendaceByDate = async function (req, res) {
             console.log(presentEmployee)
 
         }
-
-
         return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.GETDATA, totalEmployee: attendance1.length, presentEmployee: presentEmployee, absentEMployee: absentEMployee, data: attendance1 })
     }
 
@@ -202,7 +213,6 @@ const deleteAttendanceById = async function (req, res) {
 
 
 
-
 module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAttendanceById }
 
 
@@ -216,6 +226,76 @@ module.exports = { createDetails, updateAttendance, getAttendaceByDate, deleteAt
 
 
 
+
+
+
+
+
+
+
+
+        //     let arr = []
+        //     if(attendanceData.length==0){
+        //     for (empl of employee) {
+
+        //         const obj = {}
+
+        //         obj.employeId = empl._id
+
+        //         {
+        //             let createDetails = {}
+
+        //             createDetails.date = date
+        //             createDetails.employeeId = empl._id,
+        //                 createDetails.inTime = empl.inTime,
+        //                 createDetails.outTime = empl.outTime
+        //             arr.push(createDetails)
+
+        //         }
+        //     }
+
+        //     const createAttendaceDetails = await attendanceModel.create(arr)
+
+
+        //     return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: createAttendaceDetails })
+
+
+        // }
+
+
+
+
+
+
+
+// const newOne = async function(req,res){
+//     let date = req.query.date
+//     let attendanceData = await attendanceModel.find({ "date": date })
+//     let employee = await employeModel.find()
+//     let data = []
+
+//     for (var a of employee) {
+//         const isAttendace = attendanceData.filter(ele => ele.employeeId = a._id)
+//         console.log(isAttendace)
+//         if (isAttendace && isAttendace.length) {
+//       data.push(isAttendace[0])
+
+
+//         }
+//         else {
+//             data.push({
+//                 date: date,
+//                 employeeId: a._id,
+//                 inTime: null,
+//                 outTime: null
+//             })
+//         }
+
+//     }
+
+// const get = await attendanceModel.create(data)
+// res.send({data:get})
+// }
 
 
 

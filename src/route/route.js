@@ -40,6 +40,7 @@ router.post("/attendanceCreate", attendanceController.createDetails)
 router.put("/update", attendanceController.updateAttendance)
 router.get("/getAttendaceByDate", attendanceController.getAttendaceByDate)
 router.delete("/deleteAttendanceById", attendanceController.deleteAttendanceById)
+//router.get("/get", attendanceController.newOne)
 
 
 module.exports = router;
