@@ -25,9 +25,9 @@ const createDetails = async function getEmployee(req, res) {
         const attendanceBody = req.body
         const { date, inTime, outTime, name } = attendanceBody
 
-        if (!validateDate(date)) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
-        }
+        // if (!validateDate(date)) {
+        //     return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
+        // }
         let employee = await employeModel.find()
 
         let data = []
