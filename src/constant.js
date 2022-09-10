@@ -34,69 +34,69 @@ module.exports =
       "NOT_VERIFIED": "Please verify your account",
       "BLOCKED": "Your account is not active yet. Please contact Admin for activation.",
       "NOT_FOUND": "Invalid username or password",
-      "MATCH":"password dosnt match , enter same password"
+      "MATCH": "password dosnt match , enter same password"
     },
-    "VALID":{
-       "BODY": "enter some data",
-       "FEILD":"email is require please enter email",
-       "FEILD2":"password is require please enter password"
+    "VALID": {
+      "BODY": "enter some data",
+      "FEILD": "email is require please enter email",
+      "FEILD2": "password is require please enter password"
     },
     "SIGNUP": {
-        "ALREADY_EXISTS": "Try something different, this email and password already exists",
-        "EMAIL_ALREADY_EXISTS": "Try something different, this email already exists",
-        "SUCCESS": "your account is successfully created",
-        "PHONE_ALREADY_USE": "try something different phone number already in use",
-        "EMAIL": "email is not empty, please enter email",
-        "PASSWORD": "password is not empty, please enter password",
-        "VALIDEMAIL": "please enter valid email",
-        "VALIDBODY":"enter   some data",
-        "VALIDPASSWORD": "please enter valid password,password should contain upperCase letter, lowercase letter,  charecter,and number ",
-        "VALIDPHONE": "please enter valid phone number, enter 10 digit number"
-      },
-      "EMPLOYE":{
-        "SUCCESS": "employee details successfully created",
-        "GET":"get employee detatails sucessefully",
-        "UPDATE": "employee details successfully updated",
-        "PARAM":"this id is deleted or inccorect, please enter valid Id ",
-        "ABCENTID":"id not present is db or it delete",
-        "DELETE":"employee details is deleted successfully",
-        "EMPTY":"body not empty please enter some data",
-        "S_DOCUMENT":"document upload successully",
-        "F_DOCUMENT":"fail to upload document"
+      "ALREADY_EXISTS": "Try something different, this email and password already exists",
+      "EMAIL_ALREADY_EXISTS": "Try something different, this email already exists",
+      "SUCCESS": "your account is successfully created",
+      "PHONE_ALREADY_USE": "try something different phone number already in use",
+      "EMAIL": "email is not empty, please enter email",
+      "PASSWORD": "password is not empty, please enter password",
+      "VALIDEMAIL": "please enter valid email",
+      "VALIDBODY": "enter   some data",
+      "VALIDPASSWORD": "please enter valid password,password should contain upperCase letter, lowercase letter,  charecter,and number ",
+      "VALIDPHONE": "please enter valid phone number, enter 10 digit number"
+    },
+    "EMPLOYE": {
+      "SUCCESS": "employee details successfully created",
+      "GET": "get employee detatails sucessefully",
+      "UPDATE": "employee details successfully updated",
+      "PARAM": "this id is deleted or inccorect, please enter valid Id ",
+      "ABCENTID": "id not present is db or it delete",
+      "DELETE": "employee details is deleted successfully",
+      "EMPTY": "body not empty please enter some data",
+      "S_DOCUMENT": "document upload successully",
+      "F_DOCUMENT": "fail to upload document"
 
-      },
-      "LEAVE":{
-        "SUCCESS": "leave application is submitted successfully",
-        "UPDATE": "leave data successfully updated",
-        "DELETE": "leave data is deleted successfully",
-        "GETDATA": "get leave data successfully"
+    },
+    "LEAVE": {
+      "SUCCESS": "leave application is submitted successfully",
+      "UPDATE": "leave data successfully updated",
+      "DELETE": "leave data is deleted successfully",
+      "GETDATA": "get leave data successfully"
 
-      },
-      "ATTENDANCE":{
-        "SUCCESS": "your attendance is recorded successfully",
-        "UPDATE": "attendance data successfully  updated",
-        "DELETE": "attendance data is deleted successfully",
-        "GETDATA": "get attendance  data successfully",
-        "DATE":"it is not correct date format for date , please enter in format 'DD/MM/YYYY'",
-        "TIME":"it is not correct time format for time, please enter in format 'HH:mm'"
+    },
+    "ATTENDANCE": {
+      "SUCCESS": "your attendance is recorded successfully",
+      "UPDATE": "attendance data successfully  updated",
+      "DELETE": "attendance data is deleted successfully",
+      "GETDATA": "get attendance  data successfully",
+      "DATE": "it is not correct date format for date , please enter in format 'DD/MM/YYYY'",
+      "TIME": "it is not correct time format for time, please enter in format 'HH:mm'"
 
-      },
-      "EXPENSE":{
-        "SUCCESS": "expense data is successfully created",
-        "UPDATE": "expense data successfully  updated",
-        "DELETE": "expense data  is deleted successfully",
-        "GETDATA": "get expense data  successfully"
+    },
+    "EXPENSE": {
+      "SUCCESS": "expense data is successfully created",
+      "UPDATE": "expense data successfully  updated",
+      "DELETE": "expense data  is deleted successfully",
+      "GETDATA": "get expense data  successfully"
 
-      },
-      "AUTHENTICATE": {
-        "AUTHORIZE": "user is authorise able to access data",
-        "AUTHENTICATE": "user is authenticate successfully",
-        "FAILER": "user not authorise",
-        "TOKEN": "Missing authentication token in request",
-        "INVALID": "token userId and blogUserID is not same , please enter valid userid",
-        "invaild":"userId and token userId not same"
-      },
+    },
+    "AUTHENTICATE": {
+      "AUTHORIZE": "user is authorise able to access data",
+      "AUTHENTICATE": "user is authenticate successfully",
+      "FAILER": "user not authorise",
+      "TOKEN": "Missing authentication token in request",
+      "INVALID": "token userId and blogUserID is not same , please enter valid userid",
+      "invaild": "userId and token userId not same"
+    },
 
-  
-}
+
+  }
 }

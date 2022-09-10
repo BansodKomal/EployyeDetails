@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 app.use(fileUpload({
-    useTempFiles:true
+    useTempFiles: true
 }))
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -35,14 +35,14 @@ app.use((req, res, next) => {
     }
     next();
 });
-app.use(cors()) 
-mongoose.connect(process.env.db, {useNewUrlParser: true})
+app.use(cors())
+mongoose.connect(process.env.db, { useNewUrlParser: true })
     .then(() => console.log('MongoDb Connected'))
     .catch(err => console.log(err))
 
 app.use('/', route);
 
 
-app.listen(process.env.PORT || 3000, function(){
+app.listen(process.env.PORT || 3000, function () {
     console.log(`the express is run on ` + (process.env.PORT || 3000))
 })

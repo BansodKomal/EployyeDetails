@@ -109,7 +109,7 @@ const updateEmployee = async function (req, res) {
 
 
     let updatedEmployeeDetails = await employeModel.findOneAndUpdate({ _id: employeId }, updateEmployeeBody, { new: true })
-    res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updatedEmployeeDetails});
+    res.status(success).send({ status: true, message: constant.messages.EMPLOYE.UPDATE, data: updatedEmployeeDetails });
   }
 
   catch (err) {
@@ -133,16 +133,16 @@ const deleteEmpleById = async function (req, res) {
       return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
     }
 
-   
+
     // const deleteId = await cloudinary.uploader.destroy(delteEmployeesDetail.documentsId)
     const findEmployeId = await employeModel.findOneAndDelete({ '_id': employeId })
     if (findEmployeId) {
-      return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: findEmployeId})
+      return res.status(success).send({ status: true, message: constant.messages.EMPLOYE.DELETE, data: findEmployeId })
 
-    }else 
-    return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-}
-  
+    } else
+      return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+  }
+
   catch (err) {
     res.status(server).send({ status: false, message: err.message })
   }

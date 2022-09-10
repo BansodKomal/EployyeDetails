@@ -17,7 +17,7 @@ const auth = async function (req, res, next) {
         }
 
         let userId = await userModel.findOne({ _id: decodedToken.userId })
-      
+
         next();
     }
     catch (err) {

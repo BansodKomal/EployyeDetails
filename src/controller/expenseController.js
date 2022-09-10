@@ -63,13 +63,10 @@ const updateExpenseData = async function (req, res) {
         if (!isValidObjectId(expenseId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-        let findExpenseId = await expenseModel.findById(expenseId)
-        // if (!findExpenseId) {
-        //     return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
-        // }
+
 
         let updatedExpenseId = await expenseModel.findOneAndUpdate({ _id: expenseId }, updateExpenseBody, { new: true })
-        res.status(success).send({ status: true, message: constant.messages.EXPENSE.UPDATE, data:  updatedExpenseId })
+        res.status(success).send({ status: true, message: constant.messages.EXPENSE.UPDATE, data: updatedExpenseId })
     }
     catch (err) {
         res.status(server).send({ status: false, message: err.message })
@@ -90,13 +87,13 @@ const delteExpenseData = async function (req, res) {
         if (!isValidObjectId(expenseId)) {
             return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.PARAM, data: null })
         }
-       
-        const findExpenseData = await expenseModel.findOneAndDelete({ '_id': expenseId  })
-        if (findExpenseData) {
-            return res.status(success).send({ status: true, message: constant.messages.EXPENSE.DELETE, data: findExpenseData})
 
-        }else 
-        return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
+        const findExpenseData = await expenseModel.findOneAndDelete({ '_id': expenseId })
+        if (findExpenseData) {
+            return res.status(success).send({ status: true, message: constant.messages.EXPENSE.DELETE, data: findExpenseData })
+
+        } else
+            return res.status(badRequest).send({ status: false, message: constant.messages.EMPLOYE.ABCENTID, data: null })
     }
 
     catch (err) {

@@ -3,21 +3,21 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const UserSchema = new mongoose.Schema({
 
     name: {
-         type: String 
-        },
+        type: String
+    },
     email: {
         type: String,
-        required:true,
-       
+        required: true,
+
     },
     phone: {
-        type:Number,
-        required:true,
-       
+        type: Number,
+        required: true,
+
     },
     password: {
         type: String,
-        required:true,
+        required: true,
     }
 
 }, { timestamps: true }
