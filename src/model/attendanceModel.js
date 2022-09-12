@@ -3,7 +3,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const AttendanceSchema = new mongoose.Schema({
 
     date: {
-        type: String,
+        type: Date,
         // required: true,
     },
     employeeId: {
@@ -12,15 +12,15 @@ const AttendanceSchema = new mongoose.Schema({
         ref: "Employee"
 
     },
-    name:{
-type:String
+    name: {
+        type: String
     },
     inTime: {
-        type: String,
+        type: Date,
         default: null
     },
     outTime: {
-        type: String,
+        type: Date,
         default: null
     }
 
