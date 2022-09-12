@@ -10,11 +10,11 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-function validateDate(testdate) {
-   // var date_regex = /^\d{2}\/\d{2}\/\d{4}$/;
-   var date_regex = /^\d{2}\/\d{2}\/\d{4}$/
-    return date_regex.test(testdate);
-}
+// function validateDate(testdate) {
+//    // var date_regex = /^\d{2}\/\d{2}\/\d{4}$/;
+//    var date_regex = /^\d{2}\/\d{2}\/\d{4}$/
+//     return date_regex.test(testdate);
+// }
 
 const createDetails = async function getEmployee(req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
@@ -26,9 +26,7 @@ const createDetails = async function getEmployee(req, res) {
         const attendanceBody = req.body
         const { date, inTime, outTime, name } = attendanceBody
 
-        if (!validateDate(date)) {
-            return res.status(badRequest).send({ status: false, message: constant.messages.ATTENDANCE.DATE, data: null })
-        }
+      
         let employee = await employeModel.find()
 
 
