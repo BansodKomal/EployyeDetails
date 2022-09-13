@@ -28,14 +28,17 @@ const createDetails = async function getEmployee(req, res) {
 
       
         let employee = await employeModel.find()
-
+        let dateFormat = moment().format("LLL",date)
+        if(!dateFormat){
+            return res.status(badRequest).send({ status:false, message: constant.messages.ATTENDANCE.DATE, data: null})
+        }
         
         const attendanceRecord = await attendanceModel.find({ "date": date })
         if (attendanceRecord.length == 0) {
             let arr = []
             for (var a of employee) {
                 let obj = {}
-                obj.date = date
+                obj.date = dateFormat
                 obj.employeeId = a._id
                 obj.name = a.name
                 obj.inTime = null
@@ -53,7 +56,7 @@ const createDetails = async function getEmployee(req, res) {
                 console.log(attendanceData.length)
                 if (!attendanceData.length) {
                     data.push({
-                        date: date,
+                        date: dateFormat,
                         employeeId: a._id,
                         name: a.name,
                         inTime: null,
@@ -190,7 +193,9 @@ const newCreateDetails = async function getEmployee(req, res) {
         const attendanceBody = req.body
         const { date, inTime, outTime, name } = attendanceBody
         let employee = await employeModel.find()
-        const attendanceRecord = await attendanceModel.find({ "date": date })
+        const attendanceRecord = await attendanceModel.find({ "date": date }) //sort({_id:-1})
+        let find = await employeModel.find().sort({_id:-1})
+       // console.log(find)
         if (attendanceRecord.length == 0) {
             let arr = []
             for (var a of employee) {
@@ -207,38 +212,62 @@ const newCreateDetails = async function getEmployee(req, res) {
         }
         else {
             console.log("sdfg");
-            for (var a of employee) {
-                var data = []
-                let attendanceData = await attendanceModel.find({ "date": date, "employeeId": a._id })
-               for(var b of  attendanceRecord){
-                console.log(a._id)
-                console.log((b.employeeId))
-               // console.log(b.employeeId)
-                if (!b.employeeId) {
-                    data.push({
-                        date: date,
-                        employeeId: b.employeeId,
-                        name: a.name,
-                        inTime: null,
-                        outTime: null
+            for (var a of find) {
+                let unique = []
+                console.log(unique )
+                for (var b of attendanceRecord) {
+                   if(find.length>attendanceRecord.length){
+                    console.log("ujhygfg")
+                    unique.push({
+                       
+                            date: date,
+                            employeeId: a._id,
+                            name: a.name,
+                            inTime: null,
+                            outTime: null
+
+                        })
+                        let   attendancek = await attendanceModel.create(unique)
+                        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendancek })
+
+                }
+              else{
+                    return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceRecord})
+                }
+            }
+            }
+                // var data = []
+                // let attendanceData = await attendanceModel.find({ "date": date, "employeeId": a._id })
+            //    for(var b of  attendanceRecord){
+            //     // console.log(a._id)
+            //     // console.log((b.employeeId))
+            //    // console.log(b.employeeId)
+
+            //     if (!b.employeeId) {
+            //         data.push({
+            //             date: date,
+            //             employeeId: b.employeeId,
+            //             name: a.name,
+            //             inTime: null,
+            //             outTime: null
                    
-                    })
+            //         })
 
                     // let attendance = await attendanceModel.create(data)
-                    // return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendance, attendanceRecord })
-                }
+                   // return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendance, attendanceRecord })
+                //}
                 // else{
                 //     return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceRecord})
                 // }
             }
-        }
+       // }
 
-        }
+      //  }
             
  
         let   attendancek = await attendanceModel.create(data)
                      
-        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendancek,  attendanceRecord})
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendancek })
     }
     
 
