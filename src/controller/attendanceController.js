@@ -28,9 +28,9 @@ const createDetails = async function getEmployee(req, res) {
         let employee = await employeModel.find()
         const attendanceRecord = await attendanceModel.find({ "date": date }) //sort({_id:-1})
         let find = await employeModel.find().sort({ _id: -1 })
-        if(!validateDate(date)){
-            return res.status(badRequest).send({status: true, message: constant.messages.ATTENDANCE.DATE, data: null})
-        }
+        // if(!validateDate(date)){
+        //     return res.status(badRequest).send({status: true, message: constant.messages.ATTENDANCE.DATE, data: null})
+        // }
 
         if (attendanceRecord.length == 0) {
             let arr = []
