@@ -16,11 +16,11 @@ const AttendanceSchema = new mongoose.Schema({
         type: String
     },
     inTime: {
-        type: Date,
+        type: String,
         default: null
     },
     outTime: {
-        type: Date,
+        type: String,
         default: null
     }
 

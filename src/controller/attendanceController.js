@@ -10,11 +10,11 @@ const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
-// function validateDate(testdate) {
-//    // var date_regex = /^\d{2}\/\d{2}\/\d{4}$/;
-//    var date_regex = /^\d{2}\/\d{2}\/\d{4}$/
-//     return date_regex.test(testdate);
-// }
+function validateDate(testdate) {
+   // var date_regex = /^\d{2}\/\d{2}\/\d{4}$/;
+   var date_regex = /^(?:Z|[+-](?:2[0-3]|[01][0-9]):[0-5][0-9])$/
+    return date_regex.test(testdate);
+}
 
 const createDetails = async function getEmployee(req, res) {
     const server = constant.httpCodes.HTTP_SERVER_ERROR
@@ -29,8 +29,7 @@ const createDetails = async function getEmployee(req, res) {
       
         let employee = await employeModel.find()
 
-
-
+        
         const attendanceRecord = await attendanceModel.find({ "date": date })
         if (attendanceRecord.length == 0) {
             let arr = []
@@ -153,7 +152,7 @@ const deleteAttendanceById = async function (req, res) {
         let date = req.query.date
         let attendanceId = req.query.attendanceId
 
- const findAttendanceId = await attendanceModel.deleteMany({ date: date })
+         const findAttendanceId = await attendanceModel.deleteMany({ date: date })
         if (findAttendanceId) {
             return res.status(success).send({ status: true, message: constant.messages.ATTENDANCE.DELETE, data: findAttendanceId })
 
@@ -211,28 +210,35 @@ const newCreateDetails = async function getEmployee(req, res) {
             for (var a of employee) {
                 var data = []
                 let attendanceData = await attendanceModel.find({ "date": date, "employeeId": a._id })
-                console.log(attendanceData)
-                if (!attendanceData.length) {
+               for(var b of  attendanceRecord){
+                console.log(a._id)
+                console.log((b.employeeId))
+               // console.log(b.employeeId)
+                if (!b.employeeId) {
                     data.push({
                         date: date,
-                        employeeId: a._id,
+                        employeeId: b.employeeId,
                         name: a.name,
                         inTime: null,
                         outTime: null
+                   
                     })
-                    let attendance = await attendanceModel.create(data)
-                    return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendance, attendanceRecord })
-                }else{
-                    return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceRecord})
+
+                    // let attendance = await attendanceModel.create(data)
+                    // return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendance, attendanceRecord })
                 }
+                // else{
+                //     return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendanceRecord})
+                // }
             }
+        }
 
         }
             
  
         let   attendancek = await attendanceModel.create(data)
                      
-        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendancek})
+        return res.status(newCreateStatus).send({ status: true, message: constant.messages.ATTENDANCE.SUCCESS, data: attendancek,  attendanceRecord})
     }
     
 
