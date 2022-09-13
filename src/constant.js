@@ -80,7 +80,7 @@ module.exports =
       "DATE": "it is not correct date format for date , please enter in format 'DD/MM/YYYY'",
       "TIME": "it is not correct time format for time, please enter in format 'HH:mm'",
       "DATEINPARAMA" :"please enter date in the params",
-      "ABCENTID":"date data is already deleted"
+      "ABCENTID":"this date data is already deleted"
 
     },
     "EXPENSE": {
